@@ -82,7 +82,7 @@ def process_document_task(
         return {"error": f"File not found: {file_path}"}
     except Exception as exc:
         logger.exception("Task failed for %s, retrying...", file_path)
-        raise self.retry(exc=exc)
+        raise self.retry(exc=exc) from exc
 
 
 async def _run_stale_detection() -> dict:
