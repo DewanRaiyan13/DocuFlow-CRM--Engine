@@ -4,9 +4,7 @@ API dependencies – injectable utilities for route handlers.
 
 from __future__ import annotations
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.db.session import get_db  # noqa: F401
+from app.db.session import get_db
 
 
 async def get_session() -> AsyncSession:

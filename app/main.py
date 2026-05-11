@@ -32,11 +32,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
       - Dispose the async engine connection pool.
     """
     # ── Startup ────────────────────────────────────────────────────
-    from app.db.session import async_session_factory
+from app.db.session import async_session_factory
     async with async_session_factory() as session:
-        await session.execute(
-            __import__("sqlalchemy").text("SELECT 1")
-        )
+        from sqlalchemy import text
+        await session.execute(text("SELECT 1"))
 
     yield
 
