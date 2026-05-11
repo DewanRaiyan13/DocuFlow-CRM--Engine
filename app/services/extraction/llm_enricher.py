@@ -144,9 +144,13 @@ class LLMEnricher:
             return data["content"][0]["text"]
 
     async def _call_gemini(self, text: str) -> str:
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/"
+            f"models/{self._model}:generateContent"
+        )
         async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
-                f"https://generativelanguage.googleapis.com/v1beta/models/{self._model}:generateContent",
+                url,
                 params={"key": self._api_key},
                 json={
                     "contents": [
@@ -198,7 +202,7 @@ class LLMEnricher:
         if cleaned.startswith("```"):
             lines = cleaned.split("\n")
             # Remove first and last fence lines
-            lines = [l for l in lines if not l.strip().startswith("```")]
+            lines = [line for line in lines if not line.strip().startswith("```")]
             cleaned = "\n".join(lines)
 
         try:

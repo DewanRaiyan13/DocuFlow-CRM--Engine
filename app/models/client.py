@@ -7,16 +7,15 @@ any document ingestion or interaction log updates this timestamp.
 
 from __future__ import annotations
 
+import enum
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import ForeignKey, String, Text, DateTime, Enum as SAEnum
+from sqlalchemy import DateTime, Enum as SAEnum, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
-
-import enum
 
 
 class ClientStatus(str, enum.Enum):

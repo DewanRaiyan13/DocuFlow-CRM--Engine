@@ -8,15 +8,14 @@ exists within the configured threshold, the client is flagged.
 
 from __future__ import annotations
 
+import enum
 import uuid
 
-from sqlalchemy import ForeignKey, String, Text, Enum as SAEnum
+from sqlalchemy import Enum as SAEnum, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
-
-import enum
 
 
 class InteractionType(str, enum.Enum):

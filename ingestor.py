@@ -23,6 +23,7 @@ import argparse
 import asyncio
 import logging
 import sys
+import time
 from pathlib import Path
 
 logging.basicConfig(
@@ -51,7 +52,6 @@ def cmd_watch(args: argparse.Namespace) -> None:
 
     try:
         # Keep the main thread alive
-        import time
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
@@ -96,9 +96,12 @@ def cmd_process(args: argparse.Namespace) -> None:
             logger.info("  Duration:      %dms", doc.processing_duration_ms or 0)
 
             if doc.llm_metadata:
-                logger.info("  LLM Sentiment: %s", doc.llm_metadata.get("sentiment", "N/A"))
-                logger.info("  LLM Budget:    %s", doc.llm_metadata.get("total_budget", "N/A"))
-                logger.info("  LLM Summary:   %s", doc.llm_metadata.get("summary", "N/A")[:100])
+                sentiment = doc.llm_metadata.get("sentiment", "N/A")
+                logger.info("  LLM Sentiment: %s", sentiment)
+                budget = doc.llm_metadata.get("total_budget", "N/A")
+                logger.info("  LLM Budget:    %s", budget)
+                summary = doc.llm_metadata.get("summary", "N/A")[:100]
+                logger.info("  LLM Summary:   %s", summary)
             logger.info("─" * 60)
 
     asyncio.run(_run())
@@ -148,7 +151,12 @@ def cmd_bulk(args: argparse.Namespace) -> None:
     else:
         logger.info("  Dry run – use --dispatch to send tasks to Celery.")
         for entry in manifest.entries[:10]:
-            logger.info("    📄 %s (%s, %d bytes)", entry.filename, entry.extension, entry.file_size_bytes)
+            logger.info(
+                "    📄 %s (%s, %d bytes)",
+                entry.filename,
+                entry.extension,
+                entry.file_size_bytes,
+            )
 
 
 def main() -> None:

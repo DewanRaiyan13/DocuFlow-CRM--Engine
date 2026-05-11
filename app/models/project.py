@@ -7,19 +7,22 @@ and deadline – all populated automatically by the LLM enrichment step.
 
 from __future__ import annotations
 
+import enum
 import uuid
 from datetime import date
 
 from sqlalchemy import (
-    ForeignKey, String, Text, Numeric, Date,
+    Date,
     Enum as SAEnum,
+    ForeignKey,
+    Numeric,
+    String,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
-
-import enum
 
 
 class ProjectStatus(str, enum.Enum):

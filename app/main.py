@@ -7,21 +7,22 @@ events (DB pool init, file watcher startup).
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
-from app.config import get_settings
 from app.api.v1.router import api_router
-from app.db.session import engine
+from app.config import get_settings
+from app.db.session import async_session_factory, engine
 
 settings = get_settings()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     """
     Startup / Shutdown lifecycle.
 
@@ -32,9 +33,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
       - Dispose the async engine connection pool.
     """
     # ── Startup ────────────────────────────────────────────────────
-    from app.db.session import async_session_factory
     async with async_session_factory() as session:
-        from sqlalchemy import text
         await session.execute(text("SELECT 1"))
 
     yield
@@ -45,7 +44,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 def create_application() -> FastAPI:
     """Application factory – keeps module-level import side-effects minimal."""
-    app = FastAPI(
+    application = FastAPI(
         title=settings.APP_NAME,
         version=settings.APP_VERSION,
         description=(
@@ -58,7 +57,7 @@ def create_application() -> FastAPI:
     )
 
     # ── CORS ───────────────────────────────────────────────────────
-    app.add_middleware(
+    application.add_middleware(
         CORSMiddleware,
         allow_origins=["*"] if settings.DEBUG else [],
         allow_credentials=True,
@@ -67,9 +66,9 @@ def create_application() -> FastAPI:
     )
 
     # ── Routers ────────────────────────────────────────────────────
-    app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+    application.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
-    return app
+    return application
 
 
 app = create_application()

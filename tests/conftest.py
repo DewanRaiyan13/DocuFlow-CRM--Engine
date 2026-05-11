@@ -1,8 +1,9 @@
 """Test configuration and shared fixtures."""
 
-import pytest
 import asyncio
 from unittest.mock import AsyncMock
+
+import pytest
 
 
 @pytest.fixture(scope="session")

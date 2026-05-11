@@ -7,11 +7,11 @@ the Celery queue for background processing.
 
 from __future__ import annotations
 
-import uuid
 import shutil
+import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -53,7 +53,10 @@ async def upload_document(
     if suffix not in settings.SUPPORTED_EXTENSIONS:
         raise HTTPException(
             status_code=400,
-            detail=f"Unsupported file type: {suffix}. Supported: {settings.SUPPORTED_EXTENSIONS}",
+            detail=(
+                f"Unsupported file type: {suffix}."
+                f" Supported: {settings.SUPPORTED_EXTENSIONS}"
+            ),
         )
 
     # Save to watch directory
@@ -124,7 +127,8 @@ async def bulk_upload(
             skipped += 1
             continue
 
-        dest = settings.watch_path / (file.filename or f"unnamed_{uuid.uuid4().hex[:8]}")
+        fallback_name = f"unnamed_{uuid.uuid4().hex[:8]}"
+        dest = settings.watch_path / (file.filename or fallback_name)
         with open(dest, "wb") as f:
             shutil.copyfileobj(file.file, f)
 

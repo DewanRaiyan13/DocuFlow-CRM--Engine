@@ -2,9 +2,7 @@
 Unit tests for the ingestion pipeline.
 """
 
-import pytest
 from pathlib import Path
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from app.services.ingestion.pipeline import compute_file_hash, detect_mime_type
 

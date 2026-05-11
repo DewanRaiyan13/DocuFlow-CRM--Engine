@@ -10,6 +10,7 @@ running as a Docker container or systemd service.
 import logging
 import signal
 import sys
+import time
 
 from app.watcher.file_watcher import FileWatcher
 
@@ -25,7 +26,7 @@ def main() -> None:
     watcher.start()
 
     # Graceful shutdown on SIGINT / SIGTERM
-    def _shutdown(signum, frame):
+    def _shutdown(signum, _frame):
         logger.info("Received signal %s – shutting down watcher.", signum)
         watcher.stop()
         sys.exit(0)
@@ -34,7 +35,13 @@ def main() -> None:
     signal.signal(signal.SIGTERM, _shutdown)
 
     logger.info("File watcher is running. Press Ctrl+C to stop.")
-    signal.pause()
+
+    # Block forever (cross-platform alternative to signal.pause())
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        watcher.stop()
 
 
 if __name__ == "__main__":

@@ -5,9 +5,9 @@ Tests use small fixture files to verify PDF and DOCX extractors
 work correctly in isolation.
 """
 
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+
+import pytest
 
 from app.services.extraction.base import ExtractionResult
 from app.services.extraction.registry import ExtractorRegistry

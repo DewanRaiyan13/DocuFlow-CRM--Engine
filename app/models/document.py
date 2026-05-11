@@ -7,19 +7,23 @@ the structured data extracted by the parsing + LLM enrichment stages.
 
 from __future__ import annotations
 
+import enum
 import uuid
 from datetime import datetime
 
 from sqlalchemy import (
-    ForeignKey, String, Text, Integer, DateTime,
-    Enum as SAEnum, BigInteger,
+    BigInteger,
+    DateTime,
+    Enum as SAEnum,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
 )
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
-
-import enum
 
 
 class DocumentType(str, enum.Enum):

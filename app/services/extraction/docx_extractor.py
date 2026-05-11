@@ -8,14 +8,12 @@ detection, and metadata extraction from core document properties.
 from __future__ import annotations
 
 import re
-from datetime import datetime
 from pathlib import Path
 
 from docx import Document as DocxDocument
 from docx.opc.exceptions import PackageNotFoundError
 
 from app.services.extraction.base import BaseExtractor, ExtractionResult
-
 
 _CASE_NUMBER_PATTERN = re.compile(
     r"(?:case|file|ref(?:erence)?|docket|matter)\s*(?:#|no\.?|number)?\s*[:.]?\s*"
@@ -55,7 +53,9 @@ class DocxExtractor(BaseExtractor):
             for table in doc.tables:
                 for row in table.rows:
                     row_text = " | ".join(
-                        cell.text.strip() for cell in row.cells if cell.text.strip()
+                        cell.text.strip()
+                        for cell in row.cells
+                        if cell.text.strip()
                     )
                     if row_text:
                         paragraphs.append(row_text)
@@ -95,7 +95,11 @@ class DocxExtractor(BaseExtractor):
     ) -> str | None:
         """Prefer heading-styled paragraphs; fall back to first paragraph."""
         for para in doc.paragraphs:
-            if para.style and para.style.name and "heading" in para.style.name.lower():
+            if (
+                para.style
+                and para.style.name
+                and "heading" in para.style.name.lower()
+            ):
                 text = para.text.strip()
                 if text and len(text) > 3:
                     return text[:500]
