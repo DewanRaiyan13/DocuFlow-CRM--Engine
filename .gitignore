@@ -54,6 +54,12 @@ alembic/versions/*.pyc
 *.log
 logs/
 
+# Ruff
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
 # Coverage
 .coverage
 htmlcov/
