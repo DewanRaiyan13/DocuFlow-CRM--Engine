@@ -1,0 +1,135 @@
+# ──────────────────────────────────────────────────────────────────
+# DocuFlow-CRM — Docker Compose
+# ──────────────────────────────────────────────────────────────────
+# Services:
+#   - api:       FastAPI application server
+#   - worker:    Celery document processing worker
+#   - beat:      Celery Beat scheduler (stale lead detection)
+#   - db:        PostgreSQL 16
+#   - redis:     Redis 7 (Celery broker + result backend)
+#   - watcher:   File watcher daemon
+# ──────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── PostgreSQL ────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: docuflow
+      POSTGRES_PASSWORD: docuflow
+      POSTGRES_DB: docuflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docuflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ─────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI Server ────────────────────────────────────────────
+  api:
+    build: .
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - watch_dir:/app/watch_directory
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://docuflow:docuflow@db:5432/docuflow
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      WATCH_DIRECTORY: /app/watch_directory
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ── Celery Worker (document processing) ───────────────────────
+  worker:
+    build: .
+    command: >
+      celery -A app.workers.celery_app worker
+      --loglevel=info
+      --concurrency=4
+      --queues=documents,indexing,docuflow
+    volumes:
+      - .:/app
+      - watch_dir:/app/watch_directory
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://docuflow:docuflow@db:5432/docuflow
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      WATCH_DIRECTORY: /app/watch_directory
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ── Celery Beat (scheduled tasks) ─────────────────────────────
+  beat:
+    build: .
+    command: >
+      celery -A app.workers.celery_app beat
+      --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://docuflow:docuflow@db:5432/docuflow
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # ── File Watcher Daemon ───────────────────────────────────────
+  watcher:
+    build: .
+    command: python -m app.watcher.run
+    volumes:
+      - .:/app
+      - watch_dir:/app/watch_directory
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://docuflow:docuflow@db:5432/docuflow
+      CELERY_BROKER_URL: redis://redis:6379/1
+      WATCH_DIRECTORY: /app/watch_directory
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
+  watch_dir:

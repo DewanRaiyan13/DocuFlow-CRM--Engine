@@ -1,0 +1,36 @@
+# ──────────────────────────────────────────────────────────────────
+# DocuFlow-CRM — Python Dependencies
+# ──────────────────────────────────────────────────────────────────
+
+# Core Framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.10.0
+pydantic-settings>=2.6.0
+python-multipart>=0.0.12
+
+# Database
+sqlalchemy[asyncio]>=2.0.36
+asyncpg>=0.30.0
+alembic>=1.14.0
+psycopg2-binary>=2.9.10
+
+# Task Queue
+celery[redis]>=5.4.0
+redis>=5.2.0
+
+# File Monitoring
+watchdog>=6.0.0
+
+# Document Parsing
+PyMuPDF>=1.25.0
+python-docx>=1.1.0
+
+# LLM / HTTP
+httpx>=0.28.0
+
+# Email Validation
+email-validator>=2.2.0
+
+# Utilities
+python-dotenv>=1.0.0
