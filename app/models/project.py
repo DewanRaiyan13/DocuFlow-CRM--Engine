@@ -13,11 +13,13 @@ from datetime import date
 
 from sqlalchemy import (
     Date,
-    Enum as SAEnum,
     ForeignKey,
     Numeric,
     String,
     Text,
+)
+from sqlalchemy import (
+    Enum as SAEnum,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -25,7 +27,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, TimestampMixin
 
 
-class ProjectStatus(str, enum.Enum):
+class ProjectStatus(enum.StrEnum):
     PROPOSAL = "proposal"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -33,7 +35,7 @@ class ProjectStatus(str, enum.Enum):
     CANCELLED = "cancelled"
 
 
-class Sentiment(str, enum.Enum):
+class Sentiment(enum.StrEnum):
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
@@ -74,8 +76,8 @@ class Project(TimestampMixin, Base):
     )
 
     # ── Relationships ──────────────────────────────────────────────
-    client: Mapped["Client"] = relationship(back_populates="projects")  # noqa: F821
-    documents: Mapped[list["Document"]] = relationship(  # noqa: F821
+    client: Mapped[Client] = relationship(back_populates="projects")  # noqa: F821
+    documents: Mapped[list[Document]] = relationship(  # noqa: F821
         back_populates="project",
         cascade="all, delete-orphan",
         lazy="selectin",

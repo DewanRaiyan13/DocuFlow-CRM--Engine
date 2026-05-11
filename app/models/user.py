@@ -4,7 +4,7 @@ User model – system operators / freelancers who own the CRM instance.
 
 from __future__ import annotations
 
-from sqlalchemy import String, Boolean
+from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
@@ -22,7 +22,7 @@ class User(TimestampMixin, Base):
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # ── Relationships ──────────────────────────────────────────────
-    clients: Mapped[list["Client"]] = relationship(  # noqa: F821
+    clients: Mapped[list[Client]] = relationship(  # noqa: F821
         back_populates="owner",
         cascade="all, delete-orphan",
         lazy="selectin",

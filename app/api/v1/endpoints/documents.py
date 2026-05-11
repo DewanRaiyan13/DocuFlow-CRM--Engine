@@ -19,9 +19,9 @@ from app.api.deps import get_session
 from app.config import get_settings
 from app.models import Document, ProcessingStatus
 from app.schemas.document import (
+    BulkUploadResponse,
     DocumentRead,
     DocumentUploadResponse,
-    BulkUploadResponse,
 )
 from app.services.ingestion.pipeline import compute_file_hash
 from app.workers.tasks import process_document_task

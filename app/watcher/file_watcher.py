@@ -15,12 +15,12 @@ Features:
 from __future__ import annotations
 
 import logging
-import time
 import threading
+import time
 from pathlib import Path
 
+from watchdog.events import FileCreatedEvent, FileSystemEventHandler
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler, FileCreatedEvent
 
 from app.config import get_settings
 

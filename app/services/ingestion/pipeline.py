@@ -20,21 +20,22 @@ import hashlib
 import logging
 import mimetypes
 import time
+from datetime import UTC
 from pathlib import Path
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import (
+    Client,
     Document,
     DocumentType,
-    ProcessingStatus,
     InteractionLog,
     InteractionType,
-    Client,
+    ProcessingStatus,
 )
-from app.services.extraction.registry import extractor_registry
 from app.services.extraction.llm_enricher import LLMEnricher
+from app.services.extraction.registry import extractor_registry
 
 logger = logging.getLogger(__name__)
 
@@ -182,7 +183,7 @@ class IngestionPipeline:
         doc: Document,
     ) -> None:
         """Touch client's last_activity_at and log the interaction."""
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         result = await self._session.execute(
             select(Client).where(Client.id == client_id)
@@ -192,7 +193,7 @@ class IngestionPipeline:
             logger.warning("Client %s not found, skipping activity update.", client_id)
             return
 
-        client.last_activity_at = datetime.now(timezone.utc)
+        client.last_activity_at = datetime.now(UTC)
 
         log = InteractionLog(
             interaction_type=InteractionType.DOCUMENT_INGESTED,

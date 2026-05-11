@@ -1,12 +1,19 @@
 """Pydantic schemas for API request/response serialization."""
 
 from app.schemas.client import (  # noqa: F401
-    ClientCreate, ClientRead, ClientUpdate, ClientListResponse,
-)
-from app.schemas.project import (  # noqa: F401
-    ProjectCreate, ProjectRead, ProjectUpdate,
+    ClientCreate,
+    ClientListResponse,
+    ClientRead,
+    ClientUpdate,
 )
 from app.schemas.document import (  # noqa: F401
-    DocumentRead, DocumentUploadResponse, BulkUploadResponse,
+    BulkUploadResponse,
+    DocumentRead,
+    DocumentUploadResponse,
 )
 from app.schemas.intelligence import StaleLeadReport  # noqa: F401
+from app.schemas.project import (  # noqa: F401
+    ProjectCreate,
+    ProjectRead,
+    ProjectUpdate,
+)

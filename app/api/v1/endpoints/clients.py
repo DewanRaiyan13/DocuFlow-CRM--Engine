@@ -17,9 +17,9 @@ from app.api.deps import get_session
 from app.models import Client, ClientStatus
 from app.schemas.client import (
     ClientCreate,
+    ClientListResponse,
     ClientRead,
     ClientUpdate,
-    ClientListResponse,
 )
 
 router = APIRouter()

@@ -14,11 +14,13 @@ from datetime import datetime
 from sqlalchemy import (
     BigInteger,
     DateTime,
-    Enum as SAEnum,
     ForeignKey,
     Integer,
     String,
     Text,
+)
+from sqlalchemy import (
+    Enum as SAEnum,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -26,7 +28,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, TimestampMixin
 
 
-class DocumentType(str, enum.Enum):
+class DocumentType(enum.StrEnum):
     PROPOSAL = "proposal"
     CONTRACT = "contract"
     INVOICE = "invoice"
@@ -35,7 +37,7 @@ class DocumentType(str, enum.Enum):
     OTHER = "other"
 
 
-class ProcessingStatus(str, enum.Enum):
+class ProcessingStatus(enum.StrEnum):
     PENDING = "pending"
     PROCESSING = "processing"
     COMPLETED = "completed"
@@ -93,7 +95,7 @@ class Document(TimestampMixin, Base):
     )
 
     # ── Relationships ──────────────────────────────────────────────
-    project: Mapped["Project | None"] = relationship(  # noqa: F821
+    project: Mapped[Project | None] = relationship(  # noqa: F821
         back_populates="documents",
     )
 

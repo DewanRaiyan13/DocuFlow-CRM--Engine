@@ -13,8 +13,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from app.services.extraction.base import BaseExtractor, ExtractionResult
-from app.services.extraction.pdf_extractor import PDFExtractor
 from app.services.extraction.docx_extractor import DocxExtractor
+from app.services.extraction.pdf_extractor import PDFExtractor
 
 
 class ExtractorRegistry:

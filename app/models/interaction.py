@@ -11,14 +11,15 @@ from __future__ import annotations
 import enum
 import uuid
 
-from sqlalchemy import Enum as SAEnum, ForeignKey, String, Text
+from sqlalchemy import Enum as SAEnum
+from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
 
 
-class InteractionType(str, enum.Enum):
+class InteractionType(enum.StrEnum):
     DOCUMENT_INGESTED = "document_ingested"
     NOTE_ADDED = "note_added"
     EMAIL_SENT = "email_sent"
@@ -56,7 +57,7 @@ class InteractionLog(TimestampMixin, Base):
     )
 
     # ── Relationships ──────────────────────────────────────────────
-    client: Mapped["Client"] = relationship(  # noqa: F821
+    client: Mapped[Client] = relationship(  # noqa: F821
         back_populates="interactions",
     )
 

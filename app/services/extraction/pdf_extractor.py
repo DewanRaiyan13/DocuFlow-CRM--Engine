@@ -15,7 +15,6 @@ import fitz  # PyMuPDF
 
 from app.services.extraction.base import BaseExtractor, ExtractionResult
 
-
 # ── Regex patterns for metadata extraction ─────────────────────────
 _CASE_NUMBER_PATTERN = re.compile(
     r"(?:case|file|ref(?:erence)?|docket|matter)\s*(?:#|no\.?|number)?\s*[:.]?\s*"

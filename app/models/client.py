@@ -9,16 +9,17 @@ from __future__ import annotations
 
 import enum
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import DateTime, Enum as SAEnum, ForeignKey, String, Text
+from sqlalchemy import DateTime, ForeignKey, String, Text
+from sqlalchemy import Enum as SAEnum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
 
 
-class ClientStatus(str, enum.Enum):
+class ClientStatus(enum.StrEnum):
     """Lifecycle stages a client can be in."""
     LEAD = "lead"
     ACTIVE = "active"
@@ -45,7 +46,7 @@ class Client(TimestampMixin, Base):
     # ── Stale-lead tracking ────────────────────────────────────────
     last_activity_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 
@@ -58,13 +59,13 @@ class Client(TimestampMixin, Base):
     )
 
     # ── Relationships ──────────────────────────────────────────────
-    owner: Mapped["User"] = relationship(back_populates="clients")  # noqa: F821
-    projects: Mapped[list["Project"]] = relationship(  # noqa: F821
+    owner: Mapped[User] = relationship(back_populates="clients")  # noqa: F821
+    projects: Mapped[list[Project]] = relationship(  # noqa: F821
         back_populates="client",
         cascade="all, delete-orphan",
         lazy="selectin",
     )
-    interactions: Mapped[list["InteractionLog"]] = relationship(  # noqa: F821
+    interactions: Mapped[list[InteractionLog]] = relationship(  # noqa: F821
         back_populates="client",
         cascade="all, delete-orphan",
         lazy="selectin",

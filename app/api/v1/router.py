@@ -8,11 +8,11 @@ auto-generated OpenAPI documentation.
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
-    health,
     clients,
-    projects,
     documents,
+    health,
     intelligence,
+    projects,
 )
 
 api_router = APIRouter()

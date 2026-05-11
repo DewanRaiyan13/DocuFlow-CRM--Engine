@@ -13,7 +13,7 @@ Celery beat task.
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -55,7 +55,7 @@ class StaleLeadDetector:
         Returns:
             A StaleLeadReport with all detected stale clients.
         """
-        cutoff = datetime.now(timezone.utc) - timedelta(
+        cutoff = datetime.now(UTC) - timedelta(
             days=self._threshold_days
         )
 
@@ -83,7 +83,7 @@ class StaleLeadDetector:
         stale_records: list[StaleClientRecord] = []
         stale_ids: list = []
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         for client, project_count in rows:
             days_inactive = (now - client.last_activity_at).days

@@ -10,10 +10,10 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from app.config import get_settings
 
 # Import all models so Alembic can detect them
 from app.models import Base  # noqa: F401
-from app.config import get_settings
 
 settings = get_settings()
 
