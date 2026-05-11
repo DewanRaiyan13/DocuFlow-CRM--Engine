@@ -34,4 +34,4 @@ class TestFileUtilities:
         assert "document" in mime or "officedocument" in mime
 
     def test_detect_mime_unknown(self):
-        assert detect_mime_type(Path("file.xyz")) == "application/octet-stream"
+        assert detect_mime_type(Path("file.unknown_ext")) == "application/octet-stream"
